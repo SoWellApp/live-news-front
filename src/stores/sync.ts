@@ -2,6 +2,8 @@ import 'pinia';
 import { defineStore } from 'pinia';
 import { useOnline } from '@vueuse/core';
 import { computed, ref } from 'vue';
+import { usePostStore } from './posts';
+
 export const useSyncState = defineStore('sync', () => {
   const isOnline = computed(() => {
     return useOnline();
@@ -19,12 +21,15 @@ export const useSyncState = defineStore('sync', () => {
     itemsProgression.value = value;
   };
 
-  const simulateProgression = () => {
-    const fakeArray = [10, 25, 50, 75, 100];
+  const simulateProgression = async () => {
+    const { fetchAllUsers } = usePostStore()
+    const users = await fetchAllUsers()
     let index = 0;
+
     const intervalId = setInterval(() => {
-      if (index < fakeArray.length) {
-        itemsProgression.value = fakeArray[index++];
+      if (index < users.length) {
+        index++
+        itemsProgression.value = 100;
       } else {
         clearInterval(intervalId);
       }
