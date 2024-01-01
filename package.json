@@ -14,9 +14,11 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.16.4",
+    "@types/pouchdb": "^6.4.2",
     "@vueuse/core": "^10.7.0",
     "axios": "^1.2.1",
     "dayjs": "^1.11.10",
+    "localforage": "^1.10.0",
     "lodash": "^4.17.21",
     "pinia": "^2.0.11",
     "quasar": "^2.6.0",

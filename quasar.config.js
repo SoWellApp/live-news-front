@@ -10,7 +10,7 @@
 
 
 const { configure } = require('quasar/wrappers');
-
+const path = require('path')
 
 module.exports = configure(function (/* ctx */) {
   return {
@@ -32,6 +32,8 @@ module.exports = configure(function (/* ctx */) {
     boot: [
       
       'axios',
+      'localforage',
+      'onlinestatus'
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
@@ -133,7 +135,7 @@ module.exports = configure(function (/* ctx */) {
       // extendSSRWebserverConf (esbuildConf) {},
       // extendPackageJson (json) {},
 
-      pwa: false,
+      pwa: true,
 
       // manualStoreHydration: true,
       // manualPostHydrationTrigger: true,
@@ -148,7 +150,7 @@ module.exports = configure(function (/* ctx */) {
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
     pwa: {
-      workboxMode: 'generateSW', // or 'injectManifest'
+      workboxMode: 'injectManifest', // or 'injectManifest'
       injectPwaMetaTags: true,
       swFilename: 'sw.js',
       manifestFilename: 'manifest.json',

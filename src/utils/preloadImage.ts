@@ -1,7 +1,10 @@
 const preloadImage = (src: string) => {
-    const img = new Image();
-    img.src = src;
-    return img
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = src;
+    });
 }
 
 export default preloadImage
