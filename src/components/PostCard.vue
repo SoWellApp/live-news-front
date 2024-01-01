@@ -2,17 +2,15 @@
   <q-card class="my-card" flat bordered>
     <q-item>
       <q-item-section avatar>
-        <q-avatar>
+        <q-avatar v-if="post.author">
           <img :src="post.author.avatar" />
         </q-avatar>
       </q-item-section>
 
       <q-item-section>
         <q-item-label>{{ post.title }}</q-item-label>
-        <q-item-label caption
-          >posted by {{ post.author.pseudo }},
-          {{ formatDate(post.updatedAt) }}</q-item-label
-        >
+        <q-item-label caption>posted by {{ post.author?.pseudo || "" }},
+          {{ formatDate(post.updated_at) }}</q-item-label>
       </q-item-section>
     </q-item>
 
@@ -20,7 +18,7 @@
 
     <q-card-section horizontal>
       <q-card-section>
-        {{ post.body }}
+        {{ post.content_text }}
       </q-card-section>
     </q-card-section>
   </q-card>

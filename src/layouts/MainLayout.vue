@@ -6,13 +6,7 @@
 
         <div>Welcome, {{ username }}</div>
         <online-check class="q-ml-sm"></online-check>
-        <q-btn
-          class="q-ml-md"
-          flat
-          round
-          :icon="ionLogOutOutline"
-          @click="logout"
-        ></q-btn>
+        <q-btn class="q-ml-md" flat round :icon="ionLogOutOutline" @click="logout"></q-btn>
       </q-toolbar>
     </q-header>
 
@@ -28,17 +22,23 @@ import { SessionStorage } from 'quasar';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import OnlineCheck from 'src/components/OnlineCheck.vue';
+import { useSessionStore } from 'src/stores/session';
+import { usePostStore } from 'src/stores/posts';
 const $route = useRoute();
 const $router = useRouter();
+const { user } = useSessionStore()
+const { resetPostsData } = usePostStore()
 const title = computed(() => {
   return $route.meta.title || 'Untitled page';
 });
 const username = computed(() => {
-  return SessionStorage.getItem('loggedUser');
+  return user.pseudo
 });
 
 const logout = () => {
   SessionStorage.remove('loggedUser');
+  // Clear all post so there will no be a animation issue during the synchronization
+  resetPostsData()
   $router.push({ name: 'login' });
 };
 </script>

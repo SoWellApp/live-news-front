@@ -12,19 +12,9 @@
       </div>
       <div class="column justify-center">
         <div class="h5 q-mb-lg row items-center justify-center">Loading...</div>
-        <q-linear-progress
-          class="q-mb-lg"
-          size="24px"
-          rounded
-          :value="itemsLoadingProgressionValue"
-          color="primary"
-        >
+        <q-linear-progress class="q-mb-lg" size="24px" rounded :value="itemsLoadingProgressionValue" color="primary">
           <div class="absolute-full flex flex-center">
-            <q-badge
-              color="white"
-              text-color="primary"
-              :label="`${itemsLoadingProgression}%`"
-            />
+            <q-badge color="white" text-color="primary" :label="`${itemsLoadingProgression}%`" />
           </div>
         </q-linear-progress>
         <div class="h5 row no-wrap items-center justify-center">
@@ -33,12 +23,7 @@
           </div>
         </div>
         <div class="row q-mt-md justify-center">
-          <q-btn
-            :label="'Cancel'"
-            icon="cancel"
-            color="primary"
-            @click="cancelSync"
-          ></q-btn>
+          <q-btn :label="'Cancel'" icon="cancel" color="primary" @click="cancelSync"></q-btn>
         </div>
       </div>
     </div>
@@ -51,12 +36,14 @@ import { useSyncState } from 'src/stores/sync';
 import { SessionStorage } from 'quasar';
 import { useRouter } from 'vue-router';
 import OnlineCheck from 'src/components/OnlineCheck.vue';
+import { useSessionStore } from 'src/stores/session';
 
 const syncState = useSyncState();
 const $router = useRouter();
+const { user, resetSession } = useSessionStore()
 
 const currentUser = computed(
-  () => SessionStorage.getItem('loggedUser') as string
+  () => user.pseudo
 );
 const itemsLoadingProgression = computed(
   () => syncState.getItemsLoadingProgression
@@ -65,14 +52,18 @@ const itemsLoadingProgressionValue = computed(
   () => syncState.getItemsLoadingProgressionValue
 );
 
-const cancelSync = () => {
-  // TODO: implement
+const cancelSync = async () => {
+  resetSession()
+  await $router.push('/')
 };
 
 watch(itemsLoadingProgression, async () => {
   if (itemsLoadingProgression.value == 100) {
-    await $router.push('/');
-    syncState.setLoadingProgression(0);
+    setTimeout(async () => { // to wait a little bit before switching page
+      await $router.push('/');
+      syncState.setLoadingProgression(0);
+
+    }, 300)
   }
 });
 onMounted(() => {
