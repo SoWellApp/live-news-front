@@ -3,7 +3,7 @@ import localforage from 'localforage'
 
 localforage.config({
   driver: localforage.INDEXEDDB, // this is the most recommended driver for localforage
-  name: "live-news"
+  name: 'live-news'
 })
 // "async" is optional;
 // more info on params: https://v2.quasar.dev/quasar-cli/boot-files

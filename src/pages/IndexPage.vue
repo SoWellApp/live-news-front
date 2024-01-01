@@ -34,10 +34,8 @@ onMounted(() => {
         scrollHeight,
         clientHeight
       } = document.documentElement;
-      console.log(!isLoadingMore)
       if (scrollTop + clientHeight >= scrollHeight - 5 && isLoadingMore) {
-        loadPosts(pagination.value?.offset + 1)
-
+        loadPosts(pagination.value?.offset + 1, 10) // 10 by 10 posts
       }
     }, 300));
   }

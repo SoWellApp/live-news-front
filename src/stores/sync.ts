@@ -22,18 +22,17 @@ export const useSyncState = defineStore('sync', () => {
   };
 
   const simulateProgression = async () => {
-    const { fetchAllUsers } = usePostStore()
+    const { fetchAllUsers, loadPosts } = usePostStore()
     const users = await fetchAllUsers()
-    let index = 0;
 
-    const intervalId = setInterval(() => {
-      if (index < users.length) {
-        index++
-        itemsProgression.value = 100;
-      } else {
-        clearInterval(intervalId);
-      }
-    }, 1000);
+    if (users) {
+      itemsProgression.value = 50
+    }
+
+    const posts = await loadPosts()
+    if (posts) {
+      itemsProgression.value = 100
+    }
   };
 
   return {

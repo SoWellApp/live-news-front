@@ -16,8 +16,8 @@ export interface Post {
   id: number;
   title: string;
   author: User | null;
-  updated_at: Date;
-  created_at: Date;
+  updated_at: string;
+  created_at: string;
   content_text: string
   content_html: string
   photo_url: string

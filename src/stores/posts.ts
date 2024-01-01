@@ -12,10 +12,10 @@ export const usePostStore = defineStore('posts', () => {
   const post_users = ref<User[]>([])
   const pagination = ref({
     offset: 0,
-    limit: 10
+    limit: 200, // we must set this limit because the API do not allow us fetching more than 200 items
   })
 
-  const loadPosts = async (offset = 0) => {
+  const loadPosts = async (offset = 0, limit = 200) => {
     // If the current offset and the offset provided in the func params are different, then we are in a load more event
     const loadMore = offset != pagination.value?.offset
     if (loadMore) {
@@ -25,13 +25,13 @@ export const usePostStore = defineStore('posts', () => {
       posts.value = [];
     }
     pagination.value = {
-      ...pagination.value,
-      offset
+      offset,
+      limit
     }
     try {
       const localPosts: string = await localforage.getItem('posts') || ''
       // Only fetch from API if the local posts are empty or we are in a load more event triggered by an infinite scroll
-      if (!localPosts || loadMore) {
+      if (!localPosts) {
         const response = await api.get<ApiPostResponse>('/blog-posts?' + queryString.stringify(pagination.value));
         if (response.status === 200) {
           // We need to attach each post to it's right author
@@ -40,13 +40,21 @@ export const usePostStore = defineStore('posts', () => {
             return item
           });
           // Sort posts by created_at in descending order (newest first)
-          posts.value = [...posts.value, ...mappedPosts].sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at)); // the "+" is there to cast the date object to number
+          const sortedPosts = [...posts.value, ...mappedPosts].sort((a, b) => +new Date(b.updated_at) - +new Date(a.updated_at)); // the "+" is there to cast the date object to number
           // Now let's update or create the local posts object
           // const postsData = localPosts ? [...JSON.parse(localPosts), ...posts.value] : posts.value
-          await localforage.setItem('posts', JSON.stringify(posts.value))
+          await localforage.setItem('posts', JSON.stringify(sortedPosts))
+
+          posts.value = sortedPosts.slice(0, 10)
+
         }
       } else {
-        posts.value = JSON.parse(localPosts)
+        const postsArray = JSON.parse(localPosts) || []
+        if (loadMore) {
+          posts.value = [...posts.value, ...postsArray.slice(pagination.value?.offset, pagination.value?.offset + pagination.value?.limit)]
+        } else {
+          posts.value = postsArray.slice(0, 10)
+        }
       }
     } catch (error) {
       console.error('🚀 ~ file: posts.ts:16 ~ loadPosts ~ error:', error);
@@ -58,11 +66,13 @@ export const usePostStore = defineStore('posts', () => {
         isLoading.value = false;
       }
     }
+
+    return posts.value
   };
 
   const fetchAllUsers = async () => {
     try {
-      const response = await api.get<ApiUsersResponse>('/users?limit=50');
+      const response = await api.get<ApiUsersResponse>('/users?limit=100');
       if (response.status === 200 && response.data?.users) {
         post_users.value = response.data?.users.map((item) => {
           preloadImage(item.profile_picture) // Images are preloaded so they are no delay displaying each user's avatar
@@ -91,13 +101,6 @@ export const usePostStore = defineStore('posts', () => {
     localforage.removeItem('posts')
   }
 
-  const updatePagination = (offset = 0) => {
-    pagination.value = {
-      ...pagination.value,
-      offset
-    }
-  }
-
   return {
     isLoading,
     posts,
@@ -106,6 +109,5 @@ export const usePostStore = defineStore('posts', () => {
     loadPosts,
     fetchAllUsers,
     resetPostsData,
-    updatePagination
   };
 });
