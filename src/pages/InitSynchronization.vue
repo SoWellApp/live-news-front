@@ -59,7 +59,9 @@ const cancelSync = async () => {
 
 watch(itemsLoadingProgression, async () => {
   if (itemsLoadingProgression.value == 100) {
-    await $router.push('/');
+    setTimeout(async () => { // to wait a little bit before switching page
+      await $router.push('/');
+    }, 300)
     syncState.setLoadingProgression(0);
   }
 });
