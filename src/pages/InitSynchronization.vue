@@ -61,8 +61,9 @@ watch(itemsLoadingProgression, async () => {
   if (itemsLoadingProgression.value == 100) {
     setTimeout(async () => { // to wait a little bit before switching page
       await $router.push('/');
+      syncState.setLoadingProgression(0);
+
     }, 300)
-    syncState.setLoadingProgression(0);
   }
 });
 onMounted(() => {

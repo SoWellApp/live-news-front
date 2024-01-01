@@ -21,8 +21,8 @@ import PostCard from 'src/components/PostCard.vue';
 import { debounce } from 'lodash';
 
 const postStore = usePostStore();
-const { isLoading, isLoadingMore, posts, pagination } = storeToRefs(postStore);
-const { loadPosts } = postStore;
+const { isLoading, isLoadingMore, posts, pagination, newPostPagination } = storeToRefs(postStore);
+const { loadPosts, loadNewPost } = postStore;
 
 onMounted(() => {
   loadPosts();
@@ -39,6 +39,13 @@ onMounted(() => {
       }
     }, 300));
   }
+  // Let's simulate a new created Post
+  // The post will be displayed on top of the list every 20 seconds
+  setInterval(() => {
+    if (navigator.onLine) { // This will only work if we are online
+      loadNewPost(newPostPagination.value.offset + 1)
+    }
+  }, 20000)
 });
 
 
