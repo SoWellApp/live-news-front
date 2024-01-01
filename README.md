@@ -12,6 +12,10 @@ The app consists off the following functionalities:
 
 You will need node version ^19.7 to run the application on your local environment.
 
+## IMPORTANT
+
+I was not able to run the application with node ^19.7 so I had to run it under ^20.0.0
+
 ## Install the dependencies
 
 ```bash
