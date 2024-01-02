@@ -7,8 +7,9 @@ export const usePostStore = defineStore('posts', () => {
   const isLoading = ref(false);
   const posts = ref<Post[]>([]);
   const limit = ref(10);
+  let simulationIntervalId: ReturnType<typeof setInterval> | null = null;
 
-  const loadPosts = async () => {
+  const loadPosts = async (loadMore = true) => {
     const currentCount = posts.value.length;
     limit.value = currentCount + 10;
 
@@ -16,10 +17,11 @@ export const usePostStore = defineStore('posts', () => {
       const storedPosts: Post[] = await localforage.getItem('posts');
 
       if (storedPosts !== null) {
-        const val = storedPosts.slice(currentCount, limit.value);
-
-        // Add the new data to the end of the existing array
-        posts.value = [...posts.value, ...val];
+        if (loadMore) {
+          const val = storedPosts.slice(currentCount, limit.value);
+          // Add the new data to the end of the existing array
+          posts.value = [...posts.value, ...val];
+        }
 
         // wait until all the avatars are loaded before displaying the data
         await Promise.all(
@@ -45,15 +47,18 @@ export const usePostStore = defineStore('posts', () => {
     isLoading.value = true;
     try {
       const response = await api.get<Post[]>('/posts/find?sort=updatedAt DESC');
+      const storedPosts: Post[] = await localforage.getItem('posts');
 
-      if (response.status === 200) {
+      if (response.status === 200 && storedPosts.length === 0) {
         const result = response.data;
 
         // display the first 10 posts
         posts.value = result.slice(0, limit.value);
 
-        // Store the data locally (offline) in localforage
+        // Store the data locally all the data (offline) in localforage
         localforage.setItem('posts', result);
+      } else {
+        posts.value = storedPosts;
       }
     } catch (error) {
       console.error('🚀 ~ file: posts.ts:16 ~ loadPosts ~ error:', error);
@@ -71,11 +76,52 @@ export const usePostStore = defineStore('posts', () => {
     await localforage.clear();
   };
 
+  const simulateNewPost = () => {
+    simulationIntervalId = setInterval(async () => {
+      const newPost: Post = {
+        updatedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        id: posts.value.length + 1,
+        title: 'New Post Title ' + posts.value.length + 1,
+        body: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Vitae exercitationem consectetur vel necessitatibus natus obcaecati voluptates et dignissimos praesentium magni!',
+        author: generateRandomUser(),
+      };
+      let storedPosts: Post[] = await localforage.getItem('posts');
+
+      // Prepend the new post
+      storedPosts = [newPost, ...storedPosts];
+
+      // Update the 'posts' array in the component
+      posts.value = [newPost, ...posts.value.slice(0, limit.value - 1)];
+      loadPosts(false);
+
+      await localforage.setItem('posts', storedPosts);
+    }, 10000); // Set interval to 10 seconds
+  };
+
+  const stopSimulation = () => {
+    if (simulationIntervalId !== null) {
+      clearInterval(simulationIntervalId);
+      simulationIntervalId = null;
+    }
+  };
+
+  const generateRandomUser = (): User => {
+    return {
+      id: Math.floor(Math.random() * 1000),
+      pseudo: 'lorem',
+      email: 'lorem@example.com',
+      avatar: `https://source.unsplash.com/random/300x200?sig=${Math.random()}`,
+    };
+  };
+
   return {
     isLoading,
     posts,
     loadPosts,
     fetchPosts,
     resetStore,
+    simulateNewPost,
+    stopSimulation,
   };
 });
