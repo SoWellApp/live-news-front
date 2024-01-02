@@ -9,11 +9,17 @@ export const usePostStore = defineStore('posts', () => {
   const limit = ref(10);
 
   const loadPosts = async () => {
+    const currentCount = posts.value.length;
+    limit.value = currentCount + 10;
+
     try {
       const storedPosts: Post[] = await localforage.getItem('posts');
 
       if (storedPosts !== null) {
-        posts.value = [...storedPosts];
+        const val = storedPosts.slice(currentCount, limit.value);
+
+        // Add the new data to the end of the existing array
+        posts.value = [...posts.value, ...val];
 
         // wait until all the avatars are loaded before displaying the data
         await Promise.all(
@@ -41,7 +47,10 @@ export const usePostStore = defineStore('posts', () => {
       const response = await api.get<Post[]>('/posts/find?sort=updatedAt DESC');
 
       if (response.status === 200) {
-        const result = response.data.slice(0, limit.value);
+        const result = response.data;
+
+        // display the first 10 posts
+        posts.value = result.slice(0, limit.value);
 
         // Store the data locally (offline) in localforage
         localforage.setItem('posts', result);
@@ -54,10 +63,19 @@ export const usePostStore = defineStore('posts', () => {
     }
   };
 
+  // Reset to default the store when logout
+  const resetStore = async () => {
+    isLoading.value = false;
+    posts.value = [];
+    limit.value = 10;
+    await localforage.clear();
+  };
+
   return {
     isLoading,
     posts,
     loadPosts,
     fetchPosts,
+    resetStore,
   };
 });

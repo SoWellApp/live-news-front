@@ -28,8 +28,13 @@ import { SessionStorage } from 'quasar';
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import OnlineCheck from 'src/components/OnlineCheck.vue';
+import { usePostStore } from 'src/stores/posts';
+
 const $route = useRoute();
 const $router = useRouter();
+const postStore = usePostStore();
+const { resetStore } = postStore;
+
 const title = computed(() => {
   return $route.meta.title || 'Untitled page';
 });
@@ -37,8 +42,11 @@ const username = computed(() => {
   return SessionStorage.getItem('loggedUser');
 });
 
-const logout = () => {
+const logout = async () => {
   SessionStorage.remove('loggedUser');
+
+  // reset the store and delete the offline storage
+  await resetStore();
   $router.push({ name: 'login' });
 };
 </script>
