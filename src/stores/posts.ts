@@ -58,7 +58,7 @@ export const usePostStore = defineStore('posts', () => {
         // Store the data locally all the data (offline) in localforage
         localforage.setItem('posts', result);
       } else {
-        posts.value = storedPosts;
+        posts.value = storedPosts.slice(0, limit.value);
       }
     } catch (error) {
       console.error('🚀 ~ file: posts.ts:16 ~ loadPosts ~ error:', error);
