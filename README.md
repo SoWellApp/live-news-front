@@ -28,7 +28,7 @@ yarn  dev
 
 Ideally, you will make one (1) commit for each of the following tasks:
 
-- [ ] Preload the users avatar
+- [x] Preload the users avatar
       So that there is no delay when displaying the user's avatar
       Use the init jauge page to prefetch all the users and their avatar
       ![Avatar not displayed while loading](https://sowellapp-my.sharepoint.com/personal/fandresena_sowellapp_com/Documents/Test%20embauche%20Senior/task-1.png)

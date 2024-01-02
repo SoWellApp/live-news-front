@@ -1,7 +1,6 @@
 <template>
   <q-page padding>
-    <template v-if="isLoading"> Loading... </template>
-    <template v-else>
+    <template v-if="!isLoading">
       <q-list class="column">
         <q-item v-for="post in posts" :key="post.id">
           <post-card :post="post"></post-card>
