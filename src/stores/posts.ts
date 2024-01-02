@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { api } from 'src/boot/axios';
-import { Post } from 'src/types';
+import { Post, User } from 'src/types';
 import { ref } from 'vue';
 import localforage from 'localforage';
 export const usePostStore = defineStore('posts', () => {
@@ -14,7 +14,7 @@ export const usePostStore = defineStore('posts', () => {
     limit.value = currentCount + 10;
 
     try {
-      const storedPosts: Post[] = await localforage.getItem('posts');
+      const storedPosts: any = await localforage.getItem('posts');
 
       if (storedPosts !== null) {
         if (loadMore) {
@@ -47,9 +47,9 @@ export const usePostStore = defineStore('posts', () => {
     isLoading.value = true;
     try {
       const response = await api.get<Post[]>('/posts/find?sort=updatedAt DESC');
-      const storedPosts: Post[] = await localforage.getItem('posts');
+      const storedPosts: any = await localforage.getItem('posts');
 
-      if (response.status === 200 && storedPosts.length === 0) {
+      if (response.status === 200 && storedPosts === null) {
         const result = response.data;
 
         // display the first 10 posts
@@ -86,7 +86,7 @@ export const usePostStore = defineStore('posts', () => {
         body: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Vitae exercitationem consectetur vel necessitatibus natus obcaecati voluptates et dignissimos praesentium magni!',
         author: generateRandomUser(),
       };
-      let storedPosts: Post[] = await localforage.getItem('posts');
+      let storedPosts: any = await localforage.getItem('posts');
 
       // Prepend the new post
       storedPosts = [newPost, ...storedPosts];
@@ -96,7 +96,7 @@ export const usePostStore = defineStore('posts', () => {
       loadPosts(false);
 
       await localforage.setItem('posts', storedPosts);
-    }, 10000); // Set interval to 10 seconds
+    }, 5000); // Set interval to 5 seconds
   };
 
   const stopSimulation = () => {
