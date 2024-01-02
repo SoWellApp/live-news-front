@@ -33,7 +33,7 @@ Ideally, you will make one (1) commit for each of the following tasks:
       Use the init jauge page to prefetch all the users and their avatar
       ![Avatar not displayed while loading](https://sowellapp-my.sharepoint.com/personal/fandresena_sowellapp_com/Documents/Test%20embauche%20Senior/task-1.png)
 
-- [ ] Store the first 10 Posts locally using [PouchDB](https://pouchdb.com/) (or any equivalent package)
+- [x] Store the first 10 Posts locally using [PouchDB](https://pouchdb.com/) (or any equivalent package)
       So that there is no loading required when we land on the Index page, and make the app work offline
       Use the init jauge page to prefetch the 10 initial Posts
 - [ ] Load 10 more Posts when we scroll to the bottom of the page
