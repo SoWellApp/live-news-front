@@ -51,9 +51,12 @@ import { useSyncState } from 'src/stores/sync';
 import { SessionStorage } from 'quasar';
 import { useRouter } from 'vue-router';
 import OnlineCheck from 'src/components/OnlineCheck.vue';
+import { usePostStore } from 'src/stores/posts';
 
 const syncState = useSyncState();
 const $router = useRouter();
+const postStore = usePostStore();
+const { fetchPosts } = postStore;
 
 const currentUser = computed(
   () => SessionStorage.getItem('loggedUser') as string
@@ -70,12 +73,26 @@ const cancelSync = () => {
 };
 
 watch(itemsLoadingProgression, async () => {
+  const mainRoute = $router.options.routes.find(
+    (route) => route.name === 'main'
+  );
+  // condition to update the synchro and be able to enter the index page
+  if (mainRoute && mainRoute.children) {
+    const indexRoute = mainRoute.children.find(
+      (child) => child.name === 'index'
+    );
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    indexRoute!.meta!.synchro = true;
+  }
+
   if (itemsLoadingProgression.value == 100) {
     await $router.push('/');
     syncState.setLoadingProgression(0);
   }
 });
-onMounted(() => {
+onMounted(async () => {
+  await fetchPosts();
   syncState.simulateProgression();
 });
 </script>

@@ -28,23 +28,23 @@ yarn  dev
 
 Ideally, you will make one (1) commit for each of the following tasks:
 
-- [ ] Preload the users avatar
+- [x] Preload the users avatar
       So that there is no delay when displaying the user's avatar
       Use the init jauge page to prefetch all the users and their avatar
       ![Avatar not displayed while loading](https://sowellapp-my.sharepoint.com/personal/fandresena_sowellapp_com/Documents/Test%20embauche%20Senior/task-1.png)
 
-- [ ] Store the first 10 Posts locally using [PouchDB](https://pouchdb.com/) (or any equivalent package)
+- [x] Store the first 10 Posts locally using [PouchDB](https://pouchdb.com/) (or any equivalent package)
       So that there is no loading required when we land on the Index page, and make the app work offline
       Use the init jauge page to prefetch the 10 initial Posts
-- [ ] Load 10 more Posts when we scroll to the bottom of the page
+- [x] Load 10 more Posts when we scroll to the bottom of the page
       Store the new Posts locally as well and when we refresh the page, all stored Posts can directly be viewed without calling the API.
       We will first load and display all Posts stored locally before attempting to call the API for more Posts
 
-- [ ] Prefetch all Posts
+- [x] Prefetch all Posts
       Use the init jauge page to prefetch ALL the Posts created as the user logs in
       All the Posts should be displayed progressively 10 by 10 locally, without any need of internet connection on the Index page.
 
-- [ ] Sync new Posts
+- [x] Sync new Posts
       On the Index page, periodically call the API to fetch new created Posts and store them locally
       Start and Stop the API generation job to simulate new Posts created
       Display newly created Posts on TOP of the list
